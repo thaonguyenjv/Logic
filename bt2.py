@@ -1,53 +1,46 @@
-from kanren import *
-from kanren.core import lall
+# expression_matcher.py
+# Bài 2: Matching mathematical expressions
+from kanren import run, var, fact
+import kanren.assoccomm as la
+# Định nghĩa các phép toán
+add = 'addition'
+mul = 'multiplication'
 
-# Declare the variable
-people = var()
+# Khai báo tính chất giao hoán, kết hợp
+fact(la.commutative, add)
+fact(la.commutative, mul)
+fact(la.associative, add)
+fact(la.associative, mul)
 
-# Define the rules
-rules = lall(
-    # There are 4 people
-    (eq, (var(), var(), var(), var()), people),
+# Tạo biến
+a, b, c = var('a'), var('b'), var('c')
 
-    # Steve's car is blue
-    (membero, ('Steve', var(), 'blue', var()), people),
+# Biểu thức gốc
+# expression_orig = 3 * (-2) + (1 + 2 * 3) * (-1)
 
-    # Person who has a cat lives in Canada
-    (membero, (var(), 'cat', var(), 'Canada'), people),
+expression_orig = (add,
+                   (mul, 3, -2),
+                   (mul, (add, 1, (mul, 2, 3)), -1))
 
-    # Matthew lives in USA
-    (membero, ('Matthew', var(), var(), 'USA'), people),
+# Các biểu thức biến đổi (dạng có biến a, b, c)
+expression1 = (add,
+               (mul, (add, 1, (mul, 2, a)), b),
+               (mul, 3, c))
 
-    # The person who has a black car lives in Australia
-    (membero, (var(), var(), 'black', 'Australia'), people),
+expression2 = (add,
+               (mul, c, 3),
+               (mul, b, (add, (mul, 2, a), 1)))
 
-    # Jack has a cat
-    (membero, ('Jack', 'cat', var(), var()), people),
+expression3 = (add,
+               (add, (mul, (mul, 2, a), b), b),
+               (mul, 3, c))
 
-    # Alfred lives in Australia
-    (membero, ('Alfred', var(), var(), 'Australia'), people),
+# So khớp biểu thức
+print("So khớp expression1 với expression_orig:")
+print(run(0, (a, b, c), la.eq_assoccomm(expression1, expression_orig)))
 
-    # Person who owns the dog lives in France
-    (membero, (var(), 'dog', var(), 'France'), people),
+print("So khớp expression2 với expression_orig:")
+print(run(0, (a, b, c), la.eq_assoccomm(expression2, expression_orig)))
 
-    # Who has a rabbit?
-    (membero, (var(), 'rabbit', var(), var()), people)
-)
-
-# Run the solver
-solutions = run(0, people, rules)
-
-# Extract the output: who has the rabbit?
-output = [house for house in solutions[0] if 'rabbit' in house][0][0]
-
-# Print the output
-print('\n' + output + ' is the owner of the rabbit')
-print('\nHere are all the details:')
-
-attribs = ['Name', 'Pet', 'Color', 'Country']
-print('\n' + '\t\t'.join(attribs))
-print('=' * 57)
-
-for item in solutions[0]:
-    print('')
-    print('\t\t'.join([str(x) for x in item]))
+print("So khớp expression3 với expression_orig:")
+print(run(0, (a, b, c), la.eq_assoccomm(expression3, expression_orig)))
