@@ -23,14 +23,17 @@ expression_orig = (add,
                    (mul, (add, 1, (mul, 2, 3)), -1))
 
 # Các biểu thức biến đổi (dạng có biến a, b, c)
+# ((1+(2a))×b)+(3×c) đưa số 3, -2, -1 thành biến a, b, c
 expression1 = (add,
                (mul, (add, 1, (mul, 2, a)), b),
                (mul, 3, c))
 
+# (c×3)+(b×((2a)+1)) hoán đổi thứ tự nhân/cộng
 expression2 = (add,
                (mul, c, 3),
                (mul, b, (add, (mul, 2, a), 1)))
 
+# (((2a)×b)+b)+(3×c) khai triển phân phối
 expression3 = (add,
                (add, (mul, (mul, 2, a), b), b),
                (mul, 3, c))
